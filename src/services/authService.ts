@@ -1,6 +1,5 @@
 import { IUserSignUp, IAuthService, IUserLogin } from "../types";
 import { User } from "@prisma/client";
-// import prismaClient from "../prisma/client";
 import { prismaClient } from "..";
 import { hashPassword, comparePassword, generateAccessToken } from "../utils";
 import { BadRequest, Conflict, ResourceNotFound } from "../middlewares/error";
@@ -15,7 +14,7 @@ export class AuthService implements IAuthService {
     user: Partial<User>;
     access_token: string;
   }> {
-    const { email, password, first_name, last_name } = payload;
+    const { email, password, username } = payload;
     const hashedPassword = await hashPassword(password);
     let user = await prismaClient.user.findFirst({ where: { email } });
     if (user) {
@@ -23,13 +22,15 @@ export class AuthService implements IAuthService {
     }
     const newUser = await prismaClient.user.create({
       data: {
-        first_name,
-        last_name,
+        username,
         email,
         password: hashedPassword,
       },
     });
     const access_token = await generateAccessToken(newUser.id);
+
+    // THESE LINES OF CODE WERE COMMENTED OUT BECAUSE I COULDN'T GET A FREE EMAIL PROVIDER...
+
     // const otp = await this.otpService.createOtp(newUser.id);
     // const { emailBody, emailText } = await this.emailService.otpEmailTemplate(
     //   first_name,
@@ -45,8 +46,7 @@ export class AuthService implements IAuthService {
     // });
     const userResponse = {
       id: newUser.id,
-      first_name: newUser.first_name,
-      last_name: newUser.last_name,
+      username: newUser.username,
       email: newUser.email,
     };
     return {
@@ -74,8 +74,7 @@ export class AuthService implements IAuthService {
     const access_token = await generateAccessToken(user.id);
     const userResponse = {
       id: user.id,
-      first_name: user.first_name,
-      last_name: user.last_name,
+      username: user.username,
       email: user.email,
     };
 
