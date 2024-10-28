@@ -11,7 +11,7 @@ const app: Express = express();
 
 app.use(express.json());
 
-app.use("/api/v1", (req, res) => {
+app.get("/api/v1", (req, res) => {
   res.json({
     status: "Success",
     message: "Welcome: I will responding to your requests",
@@ -19,7 +19,7 @@ app.use("/api/v1", (req, res) => {
 });
 
 app.use("/api/v1", rootRouter);
-// app.use("/api/docs", serve, setup(swaggerSpec));
+// app.use("/api/docs", serve, setup(swaggerSpec)); rr
 
 export const prismaClient = new PrismaClient({
   log: ["query"],
