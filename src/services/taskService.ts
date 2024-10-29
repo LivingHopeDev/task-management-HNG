@@ -12,8 +12,9 @@ export class TaskService implements ITaskService {
     if (!dueDate || !dueDate.year || !dueDate.month || !dueDate.day) {
       throw new BadRequest("Invalid due date provided");
     }
-    const dueDateObj = new Date(dueDate.year, dueDate.month - 1, dueDate.day);
-
+    const dueDateObj = new Date(
+      Date.UTC(dueDate.year, dueDate.month - 1, dueDate.day)
+    );
     const currentDate = new Date();
     if (!(dueDateObj instanceof Date) || dueDateObj <= currentDate) {
       throw new BadRequest("Due date must be a valid future date.");
@@ -103,6 +104,57 @@ export class TaskService implements ITaskService {
 
     return {
       message: "Task deleted successfully.",
+      data: [],
+    };
+  }
+
+  public async updateTask(
+    user: User,
+    taskId: string,
+    payload: ITask
+  ): Promise<{ message: string; data: Partial<Task> }> {
+    const task = await prismaClient.task.findFirst({
+      where: {
+        id: taskId,
+        OR: [
+          { createdBy: { id: user.id } },
+          { assignedTo: { has: user.email } },
+        ],
+      },
+    });
+
+    if (!task) {
+      throw new BadRequest(
+        "Task not found or you do not have access to update it."
+      );
+    }
+    const { title, description, dueDate, status, priority, tags } = payload;
+    if (!dueDate || !dueDate.year || !dueDate.month || !dueDate.day) {
+      throw new BadRequest("Invalid due date provided");
+    }
+    const dueDateObj = new Date(
+      Date.UTC(dueDate.year, dueDate.month - 1, dueDate.day)
+    );
+    console.log(dueDateObj);
+    const currentDate = new Date();
+    if (!(dueDateObj instanceof Date) || dueDateObj <= currentDate) {
+      throw new BadRequest("Due date must be a valid future date.");
+    }
+    const updatedTask = await prismaClient.task.update({
+      where: { id: taskId },
+      data: {
+        title,
+        description,
+        dueDate: dueDateObj,
+        status,
+        priority,
+        tags,
+      },
+    });
+
+    return {
+      message: "Task updated successfully.",
+      data: updatedTask,
     };
   }
 }

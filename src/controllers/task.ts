@@ -47,7 +47,15 @@ export const deleteTask = asyncHandler(async (req: Request, res: Response) => {
       message: "Task ID is required.",
     });
   }
-  const response = await taskService.deleteTask(user, taskId);
+  const { message, data } = await taskService.deleteTask(user, taskId);
+
+  return res.status(200).json({ message, data });
+});
+export const updateTask = asyncHandler(async (req: Request, res: Response) => {
+  const user = req.user;
+  const taskId = req.params.id;
+
+  const response = await taskService.updateTask(user, taskId, req.body);
 
   return res.status(200).json(response);
 });
