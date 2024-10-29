@@ -24,3 +24,15 @@ export const getAllTask = asyncHandler(async (req: Request, res: Response) => {
     pageSize,
   });
 });
+
+export const getTaskById = asyncHandler(async (req: Request, res: Response) => {
+  const user = req.user;
+  const taskId = req.params.id;
+  console.log("taskid", taskId);
+  const { message, data } = await taskService.getTaskById(user, taskId);
+
+  return res.status(200).json({
+    message,
+    data,
+  });
+});

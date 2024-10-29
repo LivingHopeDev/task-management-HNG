@@ -59,4 +59,26 @@ export class TaskService implements ITaskService {
       data: tasks,
     };
   }
+
+  public async getTaskById(user: User, taskId: string) {
+    const task = await prismaClient.task.findFirst({
+      where: {
+        id: taskId,
+        OR: [
+          { createdBy: { id: user.id } },
+          { assignedTo: { has: user.email } },
+        ],
+      },
+    });
+    if (!task) {
+      return {
+        message: "Task not found or you do not have access to it.",
+        task: null,
+      };
+    }
+    return {
+      message: "Tasks retrieved successfully",
+      data: task,
+    };
+  }
 }
