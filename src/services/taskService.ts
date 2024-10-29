@@ -1,13 +1,13 @@
 import { prismaClient } from "..";
 import { ITask, ITaskService } from "../types";
-import { Task } from "@prisma/client";
+import { Task, User } from "@prisma/client";
 import { BadRequest } from "../middlewares";
 
 export class TaskService implements ITaskService {
   public async createTask(
     payload: ITask,
     userId: string
-  ): Promise<{ message: string; task: Partial<Task> }> {
+  ): Promise<{ message: string; data: Partial<Task> }> {
     const { title, description, dueDate, status, priority, tags } = payload;
     if (!dueDate || !dueDate.year || !dueDate.month || !dueDate.day) {
       throw new BadRequest("Invalid due date provided");
@@ -34,7 +34,29 @@ export class TaskService implements ITaskService {
 
     return {
       message: "Task created successfully",
-      task,
+      data: task,
+    };
+  }
+
+  public async getAllTask(user: User) {
+    console.log(user);
+    const tasks = await prismaClient.task.findMany({
+      where: {
+        OR: [
+          { createdBy: { id: user.id } },
+          { assignedTo: { has: user.email } },
+        ],
+      },
+    });
+    if (tasks.length === 0) {
+      return {
+        message: "You have no tasks.",
+        tasks: [],
+      };
+    }
+    return {
+      message: "Tasks retrieved successfully",
+      data: tasks,
     };
   }
 }
