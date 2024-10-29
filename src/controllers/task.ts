@@ -13,15 +13,15 @@ export const createTask = asyncHandler(async (req: Request, res: Response) => {
 export const getAllTask = asyncHandler(async (req: Request, res: Response) => {
   const user = req.user;
   const page = parseInt((req.query.page as string) || "1", 10);
-  const pageSize = parseInt((req.query.pageSize as string) || "10", 10);
+  const limit = parseInt((req.query.limit as string) || "10", 10);
 
-  const { message, data } = await taskService.getAllTask(user);
+  const { message, data } = await taskService.getAllTask(user, page, limit);
 
   return res.status(200).json({
     message,
     data,
     page,
-    pageSize,
+    limit,
   });
 });
 

@@ -31,8 +31,9 @@ export class TaskService implements ITaskService {
     };
   }
 
-  public async getAllTask(user: User) {
-    console.log(user);
+  public async getAllTask(user: User, page: number, limit: number) {
+    const skip = (page - 1) * limit;
+
     const tasks = await prismaClient.task.findMany({
       where: {
         OR: [
@@ -40,6 +41,8 @@ export class TaskService implements ITaskService {
           { assignedTo: { has: user.email } },
         ],
       },
+      skip,
+      take: limit,
     });
     if (tasks.length === 0) {
       return {
