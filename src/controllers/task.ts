@@ -36,3 +36,18 @@ export const getTaskById = asyncHandler(async (req: Request, res: Response) => {
     data,
   });
 });
+
+export const deleteTask = asyncHandler(async (req: Request, res: Response) => {
+  const user = req.user;
+  const taskId = req.params.id;
+  if (!taskId) {
+    return res.status(400).json({
+      success: false,
+      status_code: 400,
+      message: "Task ID is required.",
+    });
+  }
+  const response = await taskService.deleteTask(user, taskId);
+
+  return res.status(200).json(response);
+});

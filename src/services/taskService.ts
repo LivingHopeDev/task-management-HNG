@@ -81,4 +81,28 @@ export class TaskService implements ITaskService {
       data: task,
     };
   }
+
+  public async deleteTask(user: User, taskId: string) {
+    //ONLY THE CREATOR OF A TASK CAN DELETE IT
+    const task = await prismaClient.task.findFirst({
+      where: {
+        id: taskId,
+        createdBy: { id: user.id },
+      },
+    });
+
+    if (!task) {
+      throw new BadRequest(
+        "Task not found or you do not have access to delete it."
+      );
+    }
+
+    await prismaClient.task.delete({
+      where: { id: taskId },
+    });
+
+    return {
+      message: "Task deleted successfully.",
+    };
+  }
 }
