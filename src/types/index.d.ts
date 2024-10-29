@@ -6,6 +6,18 @@ declare module "express-serve-static-core" {
   }
 }
 
+export enum StatusEnum {
+  PENDING = "pending",
+  IN_PROGRESS = "in_progress",
+  COMPLETED = "completed",
+}
+
+export enum PriorityEnum {
+  LOW = "low",
+  MEDIUM = "medium",
+  HIGH = "high",
+}
+
 export interface IUserSignUp {
   username: string;
   email: string;
@@ -15,12 +27,18 @@ export interface IUserLogin {
   email: string;
   password: string;
 }
-export interface IProduct {
-  name: string;
+export interface ITask {
+  title: string;
   description: string;
-  price: Decimal;
-  stockQuantity: Int;
-  threshold: Int;
+  status: StatusEnum;
+  priority: PriorityEnum;
+  dueDate: {
+    year: number;
+    month: number;
+    day: number;
+  };
+  assignedTo?: Array<string>;
+  tags: Array<string>;
 }
 export interface IVariation {
   productId: string;
@@ -38,9 +56,10 @@ export interface IAuthService {
   //   newPassword: string,
   //   confirmPassword: string,
   // ): Promise<{ message: string }>;
-  // generateMagicLink(email: string): Promise<{ ok: boolean; message: string }>;
-  // validateMagicLinkToken(
-  //   token: string,
-  // ): Promise<{ status: string; email: string; userId: string }>;
+
   // passwordlessLogin(userId: string): Promise<{ access_token: string }>;
+}
+
+export interface ITaskService {
+  createTask(payload: ITask, userId): Promise<unknown>;
 }
