@@ -2,6 +2,7 @@ import { prismaClient } from "..";
 import { ITask, ITaskService } from "../types";
 import { Task, User } from "@prisma/client";
 import { BadRequest } from "../middlewares";
+import { formatDate } from "../utils/formatDate";
 
 export class TaskService implements ITaskService {
   public async createTask(
@@ -9,16 +10,7 @@ export class TaskService implements ITaskService {
     userId: string
   ): Promise<{ message: string; data: Partial<Task> }> {
     const { title, description, dueDate, status, priority, tags } = payload;
-    if (!dueDate || !dueDate.year || !dueDate.month || !dueDate.day) {
-      throw new BadRequest("Invalid due date provided");
-    }
-    const dueDateObj = new Date(
-      Date.UTC(dueDate.year, dueDate.month - 1, dueDate.day)
-    );
-    const currentDate = new Date();
-    if (!(dueDateObj instanceof Date) || dueDateObj <= currentDate) {
-      throw new BadRequest("Due date must be a valid future date.");
-    }
+    const dueDateObj = formatDate(dueDate);
 
     const task = await prismaClient.task.create({
       data: {
@@ -129,17 +121,8 @@ export class TaskService implements ITaskService {
       );
     }
     const { title, description, dueDate, status, priority, tags } = payload;
-    if (!dueDate || !dueDate.year || !dueDate.month || !dueDate.day) {
-      throw new BadRequest("Invalid due date provided");
-    }
-    const dueDateObj = new Date(
-      Date.UTC(dueDate.year, dueDate.month - 1, dueDate.day)
-    );
-    console.log(dueDateObj);
-    const currentDate = new Date();
-    if (!(dueDateObj instanceof Date) || dueDateObj <= currentDate) {
-      throw new BadRequest("Due date must be a valid future date.");
-    }
+    const dueDateObj = formatDate(dueDate);
+
     const updatedTask = await prismaClient.task.update({
       where: { id: taskId },
       data: {
