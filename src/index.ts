@@ -3,8 +3,8 @@ import rootRouter from "./routes";
 import { PrismaClient } from "@prisma/client";
 import { routeNotFound, errorHandler } from "./middlewares";
 import config from "./config";
-// import { serve, setup } from "swagger-ui-express";
-// import swaggerSpec from "./swagger";
+import { serve, setup } from "swagger-ui-express";
+import swaggerSpec from "./config/swaggerConfig";
 import log from "./utils/logger";
 
 const app: Express = express();
@@ -19,7 +19,7 @@ app.get("/api/v1", (req, res) => {
 });
 
 app.use("/api/v1", rootRouter);
-// app.use("/api/docs", serve, setup(swaggerSpec)); rr
+app.use("/api/docs", serve, setup(swaggerSpec));
 
 export const prismaClient = new PrismaClient({
   log: ["query"],

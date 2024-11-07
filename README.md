@@ -85,8 +85,7 @@ yarn prisma migrate dev
 ### API Documentation
 
 Visit the url below to view the documentation
-- No available now
-<!-- `localhost:8070/api/docs` -->
+`localhost:8070/api/docs`
 
 ### Contributing
 
