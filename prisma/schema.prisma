@@ -25,6 +25,7 @@ model User {
     username                 String?
     email                    String     @unique
     password                 String
+    is_verified              Boolean    @default(false)
     createdAt                DateTime   @default(now())
     updatedAt                DateTime   @updatedAt
     otp                      Otp[]
@@ -38,7 +39,7 @@ model Otp {
     token  String
     expiry DateTime
     userId String
-    user   User     @relation(fields: [userId], references: [id])
+    user   User     @relation(fields: [userId], references: [id],onDelete: Cascade)
         @@map("otps")
 
 }
@@ -51,7 +52,7 @@ model Task {
   status              status @default(pending)
   priority            priority
   userId              String
-  createdBy User @relation( fields: [userId],references: [id])
+  createdBy User @relation( fields: [userId],references: [id],onDelete: Cascade)
   assignedTo          String[]
   tags                String[]
   createdAt           DateTime   @default(now())

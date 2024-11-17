@@ -5,7 +5,7 @@ import log from "./logger";
 
 const Sendmail = async (emailcontent: any) => {
   const transporter = nodemailer.createTransport({
-    host: "gmail",
+    service: "gmail",
     auth: {
       user: config.GOOGLE_USER,
       pass: config.GOOGLE_APP_PASSWORD,

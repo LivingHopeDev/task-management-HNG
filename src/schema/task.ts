@@ -6,6 +6,6 @@ export const TaskSchema = z.object({
   description: z.string(),
   dueDate: z.object({}),
   status: z.string().optional(),
-  priority: z.string(),
+  priority: z.nativeEnum(priority),
   tags: z.array(z.string()),
 });
