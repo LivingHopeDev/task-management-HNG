@@ -12,7 +12,6 @@ export class AuthService implements IAuthService {
   public async signUp(payload: IUserSignUp): Promise<{
     message: string;
     user: Partial<User>;
-    access_token: string;
   }> {
     const { email, password, username } = payload;
     const hashedPassword = await hashPassword(password);
@@ -27,23 +26,20 @@ export class AuthService implements IAuthService {
         password: hashedPassword,
       },
     });
-    const access_token = await generateAccessToken(newUser.id);
 
-    // THESE LINES OF CODE WERE COMMENTED OUT BECAUSE I COULDN'T GET A FREE EMAIL PROVIDER...
+    const otp = await this.otpService.createOtp(newUser.id);
+    const { emailBody, emailText } = await this.emailService.otpEmailTemplate(
+      username,
+      otp!.token
+    );
 
-    // const otp = await this.otpService.createOtp(newUser.id);
-    // const { emailBody, emailText } = await this.emailService.otpEmailTemplate(
-    //   first_name,
-    //   otp!.token
-    // );
-
-    // await Sendmail({
-    //   from: `hopedigital2021@outlook.com`,
-    //   to: email,
-    //   subject: "OTP VERIFICATION",
-    //   text: emailText,
-    //   html: emailBody,
-    // });
+    await Sendmail({
+      from: config.GOOGLE_SENDER_MAIL,
+      to: email,
+      subject: "Email VERIFICATION",
+      text: emailText,
+      html: emailBody,
+    });
     const userResponse = {
       id: newUser.id,
       username: newUser.username,
@@ -51,10 +47,9 @@ export class AuthService implements IAuthService {
     };
     return {
       user: userResponse,
-      access_token,
-      message: "User Created Successfully.",
+      message:
+        "User Created Successfully. Kindly check your mail for your verification token.",
     };
-    // "User Created Successfully. Kindly check your mail for your verification token",
   }
 
   public async login(payload: IUserLogin): Promise<{
