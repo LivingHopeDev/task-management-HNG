@@ -45,4 +45,22 @@ export class EmailService {
       emailText,
     };
   }
+
+  async shareTaskEmailTemplate(first_name: String) {
+    const intro = `
+    <p>
+
+    A task has been shared with you. Please log in to your account to view it. <br><br>
+
+
+    Thank you,<br>
+  </p>
+  `;
+
+    const { emailBody, emailText } = customEmail(intro, first_name);
+    return {
+      emailBody,
+      emailText,
+    };
+  }
 }

@@ -3,8 +3,12 @@ import { ITask, ITaskService } from "../types";
 import { Task, User } from "@prisma/client";
 import { BadRequest, InvalidInput, ResourceNotFound } from "../middlewares";
 import { formatDate } from "../utils/formatDate";
+import { Sendmail } from "../utils/sendMail";
+import { EmailService } from "./emailService";
+import config from "../config";
 
 export class TaskService implements ITaskService {
+  private emailService = new EmailService();
   public async createTask(
     payload: ITask,
     userId: string
@@ -154,14 +158,27 @@ export class TaskService implements ITaskService {
       throw new ResourceNotFound(`Task with ID ${taskId} not found`);
     }
 
-    const updatedTask = await prismaClient.task.update({
+    const sharedTask = await prismaClient.task.update({
       where: { id: taskId },
       data: { assignedTo: { push: emails } },
     });
 
+    emails.forEach(async (email) => {
+      const { emailBody, emailText } =
+        await this.emailService.shareTaskEmailTemplate(email);
+
+      await Sendmail({
+        from: `${config.GOOGLE_SENDER_MAIL}`,
+        to: email,
+        subject: `Task shared: ${sharedTask.title}`,
+        text: emailText,
+        html: emailBody,
+      });
+    });
+
     return {
       message: "Task share successfully",
-      data: updatedTask,
+      data: sharedTask,
     };
   }
 }
