@@ -9,3 +9,8 @@ export const TaskSchema = z.object({
   priority: z.nativeEnum(priority),
   tags: z.array(z.string()),
 });
+
+export const shareTaskSchema = z.object({
+  emails: z.array(z.string()),
+  taskId: z.string(),
+});

@@ -1,7 +1,7 @@
 import { prismaClient } from "..";
 import { ITask, ITaskService } from "../types";
 import { Task, User } from "@prisma/client";
-import { BadRequest } from "../middlewares";
+import { BadRequest, InvalidInput, ResourceNotFound } from "../middlewares";
 import { formatDate } from "../utils/formatDate";
 
 export class TaskService implements ITaskService {
@@ -140,6 +140,27 @@ export class TaskService implements ITaskService {
 
     return {
       message: "Task updated successfully.",
+      data: updatedTask,
+    };
+  }
+
+  public async shareTask(
+    emails: [string],
+    taskId: string
+  ): Promise<{ message: string; data: Partial<Task> }> {
+    console.log(emails);
+    const task = await prismaClient.task.findFirst({ where: { id: taskId } });
+    if (!task) {
+      throw new ResourceNotFound(`Task with ID ${taskId} not found`);
+    }
+
+    const updatedTask = await prismaClient.task.update({
+      where: { id: taskId },
+      data: { assignedTo: { push: emails } },
+    });
+
+    return {
+      message: "Task share successfully",
       data: updatedTask,
     };
   }

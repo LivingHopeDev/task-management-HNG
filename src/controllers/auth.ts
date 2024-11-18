@@ -5,16 +5,14 @@ import asyncHandler from "../middlewares/asyncHandler";
 const authService = new AuthService();
 const otpService = new OtpService();
 
-export const signup = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const { user, message } = await authService.signUp(req.body);
+export const signup = asyncHandler(async (req: Request, res: Response) => {
+  const { user, message } = await authService.signUp(req.body);
 
-    const data = {
-      user,
-    };
-    res.status(201).json({ status_code: 201, message, data });
-  }
-);
+  const data = {
+    user,
+  };
+  res.status(201).json({ status_code: 201, message, data });
+});
 
 export const login = asyncHandler(async (req: Request, res: Response) => {
   const { message, access_token, user } = await authService.login(req.body);

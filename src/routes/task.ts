@@ -1,10 +1,11 @@
-import { TaskSchema } from "../schema";
+import { TaskSchema, shareTaskSchema } from "../schema";
 import { validateData, authMiddleware } from "../middlewares";
 import {
   createTask,
   deleteTask,
   getAllTask,
   getTaskById,
+  shareTask,
   updateTask,
 } from "../controllers";
 import { Router } from "express";
@@ -14,6 +15,11 @@ taskRoute.post("/", validateData(TaskSchema), authMiddleware, createTask);
 taskRoute.get("/", authMiddleware, getAllTask);
 taskRoute.get("/:id", authMiddleware, getTaskById);
 taskRoute.delete("/:id", authMiddleware, deleteTask);
-taskRoute.put("/:id", authMiddleware, updateTask);
-
+taskRoute.put("/:id", validateData(TaskSchema), authMiddleware, updateTask);
+taskRoute.post(
+  "/share",
+  validateData(shareTaskSchema),
+  authMiddleware,
+  shareTask
+);
 export { taskRoute };
