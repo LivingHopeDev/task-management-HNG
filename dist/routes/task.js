@@ -1,0 +1,16 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.taskRoute = void 0;
+const schema_1 = require("../schema");
+const middlewares_1 = require("../middlewares");
+const controllers_1 = require("../controllers");
+const express_1 = require("express");
+const taskRoute = (0, express_1.Router)();
+exports.taskRoute = taskRoute;
+taskRoute.post("/", (0, middlewares_1.validateData)(schema_1.TaskSchema), middlewares_1.authMiddleware, controllers_1.createTask);
+taskRoute.get("/", middlewares_1.authMiddleware, controllers_1.getAllTask);
+taskRoute.get("/:id", middlewares_1.authMiddleware, controllers_1.getTaskById);
+taskRoute.delete("/:id", middlewares_1.authMiddleware, controllers_1.deleteTask);
+taskRoute.put("/:id", (0, middlewares_1.validateData)(schema_1.TaskSchema), middlewares_1.authMiddleware, controllers_1.updateTask);
+taskRoute.post("/share", (0, middlewares_1.validateData)(schema_1.shareTaskSchema), middlewares_1.authMiddleware, controllers_1.shareTask);
+taskRoute.get("/share/me", middlewares_1.authMiddleware, controllers_1.shareTaskwithMe);
