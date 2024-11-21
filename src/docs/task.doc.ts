@@ -112,6 +112,23 @@ export const getAllTask = `
  *           type: integer
  *           default: 10
  *         description: Number of tasks per page
+ *       - in: query
+ *         name: status
+ *         schema:
+ *           type: string
+ *           enum: [pending, in_progress, completed]
+ *         description: Filter tasks by their status
+ *       - in: query
+ *         name: priority
+ *         schema:
+ *           type: string
+ *           enum: [low, medium, high]
+ *         description: Filter tasks by their priority
+ *       - in: query
+ *         name: tags
+ *         schema:
+ *           type: string
+ *         description: Filter tasks by tags (comma-separated values, e.g., "work,urgent")
  *     responses:
  *       200:
  *         description: Tasks retrieved successfully
@@ -166,12 +183,23 @@ export const getAllTask = `
  *                 limit:
  *                   type: integer
  *                   example: 10
+ *       400:
+ *         description: Bad Request - Invalid filter values provided
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Invalid status value. Accepted values are: 'pending', 'in_progress', 'completed'."
  *       401:
  *         description: Unauthorized - User needs to be logged in
  *       500:
  *         description: Internal server error
  */
 `;
+
 export const getTaskById = `
 /**
  * @swagger
