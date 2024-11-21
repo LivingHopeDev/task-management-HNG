@@ -6,6 +6,7 @@ import {
   getAllTask,
   getTaskById,
   shareTask,
+  shareTaskwithMe,
   updateTask,
 } from "../controllers";
 import { Router } from "express";
@@ -22,4 +23,5 @@ taskRoute.post(
   authMiddleware,
   shareTask
 );
+taskRoute.get("/share/me", authMiddleware, shareTaskwithMe);
 export { taskRoute };

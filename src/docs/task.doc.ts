@@ -401,3 +401,111 @@ export const updateTask = `
  *         description: Internal server error
  */
 `;
+
+export const sharedTaskWithMe = `
+/**
+ * @swagger
+ * /api/v1/tasks/share/me:
+ *   get:
+ *     summary: Retrieve tasks shared with the authenticated user
+ *     tags: [Tasks]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved tasks shared with the user
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status_code:
+ *                   type: number
+ *                   example: 200
+ *                 message:
+ *                   type: string
+ *                   example: Task retrieved successfully
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Task'
+ *       400:
+ *         description: Bad Request - Invalid request or missing user
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status_code:
+ *                   type: number
+ *                   example: 400
+ *                 message:
+ *                   type: string
+ *                   example: Invalid request
+ *       401:
+ *         description: Unauthorized - Access token is missing or invalid
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status_code:
+ *                   type: number
+ *                   example: 401
+ *                 message:
+ *                   type: string
+ *                   example: Unauthorized
+ *       404:
+ *         description: Not Found - User not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status_code:
+ *                   type: number
+ *                   example: 404
+ *                 message:
+ *                   type: string
+ *                   example: User not found
+ *       500:
+ *         description: Internal Server Error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status_code:
+ *                   type: number
+ *                   example: 500
+ *                 message:
+ *                   type: string
+ *                   example: Server error
+ * components:
+ *   schemas:
+ *     Task:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: string
+ *           description: Unique identifier for the task
+ *         title:
+ *           type: string
+ *           description: Title of the task
+ *         description:
+ *           type: string
+ *           description: Detailed description of the task
+ *         assignedTo:
+ *           type: array
+ *           items:
+ *             type: string
+ *           description: List of users the task is assigned to
+ *         dueDate:
+ *           type: string
+ *           format: date
+ *           description: Due date for the task
+ *         status:
+ *           type: string
+ *           description: Current status of the task (e.g., "Pending", "Completed")
+ */
+`;

@@ -152,7 +152,6 @@ export class TaskService implements ITaskService {
     emails: [string],
     taskId: string
   ): Promise<{ message: string; data: Partial<Task> }> {
-    console.log(emails);
     const task = await prismaClient.task.findFirst({ where: { id: taskId } });
     if (!task) {
       throw new ResourceNotFound(`Task with ID ${taskId} not found`);
@@ -179,6 +178,21 @@ export class TaskService implements ITaskService {
     return {
       message: "Task share successfully",
       data: sharedTask,
+    };
+  }
+  public async taskSharedWithMe(
+    userId: string
+  ): Promise<{ message: string; data: Task[] }> {
+    const user = await prismaClient.user.findFirst({ where: { id: userId } });
+    const tasks = await prismaClient.task.findMany({
+      where: {
+        assignedTo: { has: user.email },
+      },
+    });
+
+    return {
+      message: "Task retrieved successfully",
+      data: tasks,
     };
   }
 }

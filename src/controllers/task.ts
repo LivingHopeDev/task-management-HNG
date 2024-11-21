@@ -71,3 +71,11 @@ export const shareTask = asyncHandler(async (req: Request, res: Response) => {
   const response = await taskService.shareTask(emails, taskId);
   res.status(200).json(response);
 });
+
+export const shareTaskwithMe = asyncHandler(
+  async (req: Request, res: Response) => {
+    const userId = req.user.id;
+    const response = await taskService.taskSharedWithMe(userId);
+    res.status(200).json(response);
+  }
+);
