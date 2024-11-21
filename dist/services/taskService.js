@@ -19,6 +19,7 @@ const formatDate_1 = require("../utils/formatDate");
 const sendMail_1 = require("../utils/sendMail");
 const emailService_1 = require("./emailService");
 const config_1 = __importDefault(require("../config"));
+const client_1 = require("@prisma/client");
 class TaskService {
     constructor() {
         this.emailService = new emailService_1.EmailService();
@@ -45,16 +46,30 @@ class TaskService {
             };
         });
     }
-    getAllTask(user, page, limit) {
+    getAllTask(user, page, limit, filters) {
         return __awaiter(this, void 0, void 0, function* () {
             const skip = (page - 1) * limit;
+            if (filters.status && !Object.values(client_1.status).includes(filters.status)) {
+                throw new middlewares_1.BadRequest("Invalid status value. Accepted values are: 'pending', 'in_progress', 'completed'.");
+            }
+            if (filters.priority &&
+                !Object.values(client_1.priority).includes(filters.priority)) {
+                throw new middlewares_1.BadRequest("Invalid priority value. Accepted values are: 'low', 'medium', 'high'.");
+            }
+            const whereConditions = {
+                OR: [{ createdBy: { id: user.id } }, { assignedTo: { has: user.email } }],
+            };
+            if (filters.status) {
+                whereConditions.status = filters.status;
+            }
+            if (filters.priority) {
+                whereConditions.priority = filters.priority;
+            }
+            if (filters.tags && filters.tags.length > 0) {
+                whereConditions.tags = { hasSome: filters.tags };
+            }
             const tasks = yield __1.prismaClient.task.findMany({
-                where: {
-                    OR: [
-                        { createdBy: { id: user.id } },
-                        { assignedTo: { has: user.email } },
-                    ],
-                },
+                where: whereConditions,
                 skip,
                 take: limit,
             });

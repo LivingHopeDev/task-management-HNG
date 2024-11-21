@@ -25,7 +25,12 @@ exports.getAllTask = (0, asyncHandler_1.default)((req, res) => __awaiter(void 0,
     const user = req.user;
     const page = parseInt(req.query.page || "1", 10);
     const limit = parseInt(req.query.limit || "10", 10);
-    const { message, data } = yield taskService.getAllTask(user, page, limit);
+    const filters = {
+        status: req.query.status,
+        priority: req.query.priority,
+        tags: req.query.tags ? req.query.tags.split(",") : undefined,
+    };
+    const { message, data } = yield taskService.getAllTask(user, page, limit, filters);
     return res.status(200).json({
         message,
         data,

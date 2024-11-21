@@ -15,7 +15,18 @@ export const getAllTask = asyncHandler(async (req: Request, res: Response) => {
   const page = parseInt((req.query.page as string) || "1", 10);
   const limit = parseInt((req.query.limit as string) || "10", 10);
 
-  const { message, data } = await taskService.getAllTask(user, page, limit);
+  const filters = {
+    status: req.query.status as string | undefined,
+    priority: req.query.priority as string | undefined,
+    tags: req.query.tags ? (req.query.tags as string).split(",") : undefined,
+  };
+
+  const { message, data } = await taskService.getAllTask(
+    user,
+    page,
+    limit,
+    filters
+  );
 
   return res.status(200).json({
     message,

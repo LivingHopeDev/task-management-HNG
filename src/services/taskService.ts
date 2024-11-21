@@ -6,7 +6,7 @@ import { formatDate } from "../utils/formatDate";
 import { Sendmail } from "../utils/sendMail";
 import { EmailService } from "./emailService";
 import config from "../config";
-
+import { status, priority } from "@prisma/client";
 export class TaskService implements ITaskService {
   private emailService = new EmailService();
   public async createTask(
@@ -35,19 +35,46 @@ export class TaskService implements ITaskService {
     };
   }
 
-  public async getAllTask(user: User, page: number, limit: number) {
+  public async getAllTask(
+    user: User,
+    page: number,
+    limit: number,
+    filters: any
+  ) {
     const skip = (page - 1) * limit;
+    if (filters.status && !Object.values(status).includes(filters.status)) {
+      throw new BadRequest(
+        "Invalid status value. Accepted values are: 'pending', 'in_progress', 'completed'."
+      );
+    }
+    if (
+      filters.priority &&
+      !Object.values(priority).includes(filters.priority)
+    ) {
+      throw new BadRequest(
+        "Invalid priority value. Accepted values are: 'low', 'medium', 'high'."
+      );
+    }
+    const whereConditions: any = {
+      OR: [{ createdBy: { id: user.id } }, { assignedTo: { has: user.email } }],
+    };
+
+    if (filters.status) {
+      whereConditions.status = filters.status;
+    }
+    if (filters.priority) {
+      whereConditions.priority = filters.priority;
+    }
+    if (filters.tags && filters.tags.length > 0) {
+      whereConditions.tags = { hasSome: filters.tags };
+    }
 
     const tasks = await prismaClient.task.findMany({
-      where: {
-        OR: [
-          { createdBy: { id: user.id } },
-          { assignedTo: { has: user.email } },
-        ],
-      },
+      where: whereConditions,
       skip,
       take: limit,
     });
+
     if (tasks.length === 0) {
       return {
         message: "You have no tasks.",
