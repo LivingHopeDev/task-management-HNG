@@ -17,6 +17,8 @@
 
 ## Live url
 
+`https://task-management-api-wmjx.onrender.com/api/v1`
+
 ## Features
 
 ## Technology Stack
@@ -52,6 +54,7 @@ Before setting up the project, ensure you have the following installed:
 ### Environment Variables
 
 Create a `.env` file in the root of the project and configure the following environment variables:
+Check `.env.example ` file
 
 ```env
 PORT=yourPortNumber
@@ -85,6 +88,7 @@ yarn prisma migrate dev
 ### API Documentation
 
 Visit the url below to view the documentation
+`https://task-management-api-wmjx.onrender.com/api/v1/docs`
 `localhost:8070/api/docs`
 
 ### Contributing
