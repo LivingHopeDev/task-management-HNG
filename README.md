@@ -1,4 +1,6 @@
-# Task Management System
+# Task Management API
+
+This project implements a RESTful API for a task management system. The API allows users to create, read, update, and delete (CRUD) tasks, manage authentication, and ensure scalability and error handling. Key features include secure authentication, robust error handling, and optimized database queries to handle a growing number of users and tasks efficiently.
 
 ## Table of Contents
 
@@ -17,14 +19,24 @@
 
 ## Live url
 
-`https://task-management-api-wmjx.onrender.com/api/v1`
+- Note: The database will be inactive in the next 30 days.
+  `https://task-management-api-wmjx.onrender.com/api/v1`
 
 ## Features
+
+- CRUD Operations: Users can create, read, update, and delete tasks. Tasks can have attributes like title, description, due date, status, priority, and more.
+- User Authentication: Secure user registration and login using JWT (JSON Web Token). Only authenticated users can manage their tasks.
+- Error Handling: The API provides meaningful error messages and appropriate status codes for invalid inputs, missing resources, and server issues.
+- Scalability: The API includes pagination for task retrieval and database indexing for efficient lookups.
+- Task Management: Tasks can be filtered by status, priority, and tags.
+- Task Sharing: Enable users to share tasks with others using email addresses
+- Security: Passwords are securely hashed, and JWT tokens are used for authenticating requests.
 
 ## Technology Stack
 
 - **Backend:** Node.js with Express.js
 - **Database:** PostgreSQL
+- **Hosting:** Render
 
 ## Project Setup
 
@@ -88,7 +100,7 @@ yarn prisma migrate dev
 ### API Documentation
 
 Visit the url below to view the documentation
-`https://task-management-api-wmjx.onrender.com/api/v1/docs`
+`https://task-management-api-wmjx.onrender.com/api/docs`
 `localhost:8070/api/docs`
 
 ### Contributing
