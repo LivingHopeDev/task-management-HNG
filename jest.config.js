@@ -8,4 +8,5 @@ module.exports = {
   moduleFileExtensions: ["ts", "tsx", "js", "jsx"],
   collectCoverage: true,
   collectCoverageFrom: ["src/**/*.{ts,tsx}", "!src/**/*.d.ts"],
+  extensionsToTreatAsEsm: [".ts", ".tsx"], // Treat TypeScript files as ES Modules
 };
